@@ -43,7 +43,7 @@ public class Sensor extends JFrame {
 	    getItButton.addActionListener (new ActionListener() {
 		    public void actionPerformed (ActionEvent evt) {
 			textarea.append("Calling relay...\n");
-			String result = relay.fetch_alert();
+			String result = relay.fetch_message();
 			textarea.append("   Result = " + result + "\n\n");
 		    }
 		});

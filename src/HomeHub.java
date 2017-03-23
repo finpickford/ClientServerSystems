@@ -7,6 +7,8 @@ import org.omg.CosNaming.NamingContextExt;
 import org.omg.CosNaming.NamingContextExtHelper;
 
 import java.io.*;
+import java.util.Properties;
+
 import javax.swing.*;
 
 
@@ -41,9 +43,9 @@ class RelayServant extends RelayPOA {
 //	}
 	
 	try {
-	    // Initialize the ORB
-	    System.out.println("Initializing the ORB");
-	//    ORB orb = ORB.init(args, null);
+		Properties property = new Properties();
+		property.put("org.omg.COBRA.ORBInitialPort", "1050");
+		property.put("org.omg.COBRA.ORBInitialPort", "localhost");
 	    
 	    // Get a reference to the Naming service
 	    org.omg.CORBA.Object nameServiceObj = 
@@ -53,18 +55,17 @@ class RelayServant extends RelayPOA {
 		return;
 	    }
 
-	    // Use NamingContextExt instead of NamingContext. This is 
-	    // part of the Interoperable naming Service.  
+	    // Use NamingContextExt which is part of the Interoperable
+	    // Naming Service (INS) specification.
 	    NamingContextExt nameService = NamingContextExtHelper.narrow(nameServiceObj);
 	    if (nameService == null) {
 		System.out.println("nameService = null");
 		return;
 	    }
-	
 	    
-	    // resolve the Count object reference in the Naming service
+	    // bind the Count object in the Naming service
 	    String name = "countName";
-	    ClientAndServer.HelloWorld server = HelloWorldHelper.narrow(nameService.resolve_str(name));
+	    server = HelloWorldHelper.narrow(nameService.resolve_str(name));
 	} catch (Exception e) {
 	    System.err.println("ERROR: " + e);
 	    e.printStackTrace(System.out);
@@ -73,10 +74,10 @@ class RelayServant extends RelayPOA {
     }
     
     
-    public String fetch_alert() {
+    public String fetch_message() {
 	parent.addMessage("fetch_alert called by client.  Calling server..\n");
 
-	String messageFromServer = server.rtn_alert();
+	String messageFromServer = server.hello_world();
 
 	parent.addMessage("message from server = " + messageFromServer + "\n"
 			   + "   Now forwarding to client..\n\n");
@@ -113,20 +114,10 @@ public class HomeHub extends JFrame {
 //	    out.close();
     	
     	try {
-    	    // Initialize the ORB
+    		// Initialize the ORB
+    	    System.out.println("Initializing the ORB");
     	    ORB orb = ORB.init(args, null);
     	    
-    	    // get reference to rootpoa & activate the POAManager
-    	    POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
-    	    rootpoa.the_POAManager().activate();
-    	    
-    	    // Create the Count servant object
-    	    RelayServant relayRef = new RelayServant(this, orb);
-    	    
-    	    // get object reference from the servant
-    	    org.omg.CORBA.Object ref = rootpoa.servant_to_reference(relayRef);
-    	    ClientAndServer.Relay cref = RelayHelper.narrow(ref);
-    	     
     	    // Get a reference to the Naming service
     	    org.omg.CORBA.Object nameServiceObj = 
     		orb.resolve_initial_references ("NameService");
@@ -135,18 +126,18 @@ public class HomeHub extends JFrame {
     		return;
     	    }
 
-    	    // Use NamingContextExt which is part of the Interoperable
-    	    // Naming Service (INS) specification.
+    	    // Use NamingContextExt instead of NamingContext. This is 
+    	    // part of the Interoperable naming Service.  
     	    NamingContextExt nameService = NamingContextExtHelper.narrow(nameServiceObj);
     	    if (nameService == null) {
     		System.out.println("nameService = null");
     		return;
     	    }
     	    
-    	    // bind the Count object in the Naming service
+    	    // resolve the Count object reference in the Naming service
     	    String name = "countName";
-    	    NameComponent[] countName = nameService.to_name(name);
-    	    nameService.rebind(countName, cref);
+    	    ClientAndServer.Relay relay = RelayHelper.narrow(nameService.resolve_str(name));
+    	
 
 
 	    // set up the GUI

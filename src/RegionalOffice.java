@@ -24,11 +24,12 @@ class HelloServant extends HelloWorldPOA {
 	orb = orb_val;
     }
     
-    public String rtn_alert() {
+    public String hello_world() {
 	parent.addMessage("rtn_alert called by relay.\n    Replying with message...\n\n");
 	
 	return "Alert!!";
     }
+
 }
 
 
@@ -66,7 +67,7 @@ public class RegionalOffice extends JFrame {
     	    // Initialize the ORB
     	    ORB orb = ORB.init(args, property);
     	    
-    	    // get reference to rootpoa & activate the POAManager
+    	    //get reference to rootpoa & activate the POAManager
     	    POA rootpoa = POAHelper.narrow(orb.resolve_initial_references("RootPOA"));
     	    rootpoa.the_POAManager().activate();
     	    
