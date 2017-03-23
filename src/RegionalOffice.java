@@ -15,6 +15,7 @@ import javax.swing.*;
 class HelloServant extends HelloWorldPOA {
     private RegionalOffice parent;
     private ORB orb; 
+    private ClientAndServer.Relay relay; 
     
     public HelloServant(RegionalOffice parentGUI, ORB orb_val) {
 	// store reference to parent GUI

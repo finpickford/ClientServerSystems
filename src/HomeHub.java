@@ -65,7 +65,7 @@ class RelayServant extends RelayPOA {
 	    
 	    // bind the Count object in the Naming service
 	    String name = "countName";
-	    server = HelloWorldHelper.narrow(nameService.resolve_str(name));
+	    ClientAndServer.HelloWorld server = HelloWorldHelper.narrow(nameService.resolve_str(name));
 	} catch (Exception e) {
 	    System.err.println("ERROR: " + e);
 	    e.printStackTrace(System.out);
